@@ -1,25 +1,34 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import QuoteCard from './Components/QuoteCard';
+import SavedQuotesList from './Components/SavedQuotesList';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [quote, setQuote] = useState('');
+  const [savedQuotes, setSavedQuotes] = useState([]);
+
+  const fetchQuote = async () => {
+    const response = await axios.get('https://ron-swanson-quotes.herokuapp.com/v2/quotes');
+    setQuote(response.data[0]);
+  };
+
+  const saveQuote = (quote) => {
+    setSavedQuotes([...savedQuotes, quote]);
+  };
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <h1>Ron Swanson Quotes</h1>
+      <QuoteCard quote={quote} saveQuote={saveQuote} />
+      <button onClick={fetchQuote}>Get New Quote</button>
+      <SavedQuotesList savedQuotes={savedQuotes} />
     </div>
   );
-}
+};
 
 export default App;
